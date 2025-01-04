@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AetherTech员工辅助系统</title>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1./jquery-ui.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #333;
+      padding: 10px 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar h1 {
+      color: white;
+      margin: 0;
+      letter-spacing: 2px;
+      font-weight: bold;
+    }
+
+    .logout-link {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background-color 0.3s ease;
+    }
+
+    .logout-link:hover {
+      background-color: #d32f2f;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin: 20px;
+    }
+
+    label {
+      display: inline-block;
+      width: 80px;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      width: 200px;
+      margin-bottom: 10px;
+    }
+
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"] {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background-color 0.3s ease;
+      margin-right: 10px;
+    }
+
+    input[type="button"]:hover,
+    input[type="submit"]:hover,
+    input[type="reset"]:hover {
+      background-color: #45a049;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid #ddd;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    /* 弹窗样式 */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 30%;
+      border-radius: 5px;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .modal-content label {
+      width: 100px;
+    }
+
+    .modal-content input[type="text"],
+    .modal-content select {
+      width: 250px;
+    }
+
+    /* 操作按钮样式 */
+    .action-button {
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 3px;
+      margin-right: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    .action-button:hover {
+      background-color: #0b7dda;
+    }
+
+    .action-button.delete {
+      background-color: #f44336;
+    }
+
+    .action-button.delete:hover {
+      background-color: #d32f2f;
+    }
+
+    /* 弹窗内按钮样式 */
+    .modal-content input[type="button"] {
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background-color 0.3s ease;
+    }
+
+    .modal-content input[type="button"]:hover {
+      background-color: #0b7dda;
+    }
+
+    /* jQuery UI Datepicker 样式 */
+    .ui-datepicker {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .ui-datepicker-header {
+      background-color: #f2f2f2;
+      border-bottom: 1px solid #ccc;
+      border-radius: 5px 5px 0 0;
+      padding: 10px;
+    }
+
+    .ui-datepicker-calendar {
+      margin: 10px;
+    }
+
+    .ui-datepicker-calendar th,
+    .ui-datepicker-calendar td {
+      padding: 5px;
+    }
+
+    .ui-datepicker-calendar a {
+      text-decoration: none;
+      color: #333;
+      display: block;
+      text-align: center;
+      padding: 5px;
+    }
+
+    .ui-datepicker-calendar a:hover {
+      background-color: #ddd;
+      border-radius: 3px;
+    }
+
+    /* 底部版权区域样式 */
+    .footer {
+      /* 设置了一个背景色 */
+      background-color: #dad8d8;
+      /* 设置了文字颜色 */
+      color: white;
+      /* 设置了居中 */
+      text-align: center;
+      /* 设置了底部边距 */
+      padding: 10px;
+      /* 设置了底部距离 */
+      bottom: 0;
+      /* 设置了宽度 */
+      width: 100%;
+      /* 如果有新的元素出现则会自动适应 */
+      height: auto;
+      /* 设置距离顶部的距离 */
+      margin-top: 350px;
+    }
+  </style>
+</head>
+<!-------------------------- 设置导航栏 -------------------------->
+
+<body>
+  <div class="navbar">
+    <!-- 设置导航栏内容 -->
+    <h1>AetherTech员工系统</h1>
+    <!-- 设置了一个退出的超链接 -->
+    <a href="#" class="logout-link" onclick="return confirmLogout()">退出登录</a>
+  </div>
+  <script>
+    // 用于退出登录的函数
+    function confirmLogout() {
+      // 退出登录的超链接 , 可以换成自己的登录页面
+      window.location.href = 'login.html';
+    }
+  </script>
+  <!-- 下方输入框为员工信息录入区域，可以通过姓名、年龄、性别、职位进行筛选，也可以添加员工信息。 -->
+  <form action="login.php" method="post">
+    <!-- 提示输入框的内容 -->
+    <label for="name">姓名：</label>
+    <!-- 输入框内
+    -- id: position表示这个输入框的id
+    -- name: position表示这个输入框的内部的名字
+    -- type: text表示这个输入框的类型是文本
+    -- placeholder: "请输入职位"表示这个输入框的提示内容
+    -->
+    <input id="name" name="name" type="text" placeholder="请输入姓名"></input>
+     <!-- 提示输入框的内容 -->
+    <label for="age">年龄：</label>
+    <!-- 输入框 -->
+    <input id="age" name="age" type="number" placeholder="请输入年龄"></input>
+     <!-- 提示选择框的内容 -->
+    <label for="gender">性别：</label>
+    <!-- 男女的选择框 -->
+    <select name="gender" id="gender">
+      <option value="male">男</option>
+      <option value="female">女</option>
+    </select>
+    <!-- 提示输入框的内容 -->
+    <label for="position">职位：</label>
+    <!-- 输入框 -->
+    <input id="position" name="position" type="text" placeholder="请输入职位"></input>
+    <!-- 按钮 
+    -- type: button表示这个按钮的类型是按钮
+    -- value: "查找"表示这个按钮的内容是查找
+    -- id: find表示这个按钮的id
+    -- onclick: findData()表示这个按钮被点击时执行的函数 
+    -->
+    <input type="button" value="查找" id="find" onclick="findData()"></input>
+    <!-- 按钮 -->
+    <input type="submit" value="添加" id="add" onclick="addData(event)"></input>
+    <!-- 按钮 -->
+    <input type="reset" value="清空" id="clear"></input>
+  </form>
+
+
+  <!-- 表格区域 -->
+  <table id="data-table">
+    <thead>
+      <tr>
+        <th>姓名</th>
+        <th>性别</th>
+        <th>年龄</th>
+        <th>头像</th>
+        <th>职位</th>
+        <th>入职时间</th>
+        <th>最后操作时间</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- 用与编辑员工信息的弹窗 -->
+  <div id="edit-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <form id="edit-form">
+        <div style="display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; margin-bottom: 10px;">
+            <label for="edit-name">姓名：</label>
+            <input type="text" id="edit-name" name="edit-name" placeholder="请输入姓名" data-id="">
+          </div>
+          <div style="display: flex; align-items: center; margin-bottom: 10px;">
+            <label for="edit-position">职位：</label>
+            <input type="text" id="edit-position" name="edit-position" placeholder="请输入职位">
+          </div>
+          <div style="display: flex; align-items: center; margin-bottom: 10px;">
+            <label for="edit-gender">性别：</label>
+            <select id="edit-gender">
+              <option value="male">男</option>
+              <option value="female">女</option>
+            </select>
+          </div>
+          <div style="display: flex; align-items: center; margin-bottom: 10px;">
+            <label for="edit-age">年龄：</label>
+            <input type="number" id="edit-age" name="edit-age" placeholder="请输入年龄">
+          </div>
+          <div style="display: flex; align-items: center; margin-bottom: 10px;">
+            <label for="edit-avatar">头像：</label>
+            <input type="text" id="edit-avatar" name="edit-avatar" placeholder="请输入头像链接">
+          </div>
+          <div style="display: flex; align-items: center; margin-bottom: 10px;">
+            <label for="edit-entry-time">入职时间：</label>
+            <input type="text" id="edit-entry-time" name="edit-entry-time" placeholder="请输入入职时间">
+          </div>
+          <input type="button" value="保存修改" onclick="saveEdit()">
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- 具体的业务逻辑代码 -->
+  <script>
+    // 定义了一个空数组,用于存储每一个人的信息
+    let data = [];
+
+    // 页面加载完成后执行的函数
+    function findData() {
+      // 获取输入框的值document表示文档
+      // getElementById表示获取
+      // id为name的元素的值
+      // value表示获取值
+      // trim表示去掉前后空格
+      let name = document.getElementById('name').value.trim();
+      let age = document.getElementById('age').value.trim();
+      let gender = document.getElementById('gender').value.trim();
+      let position = document.getElementById('position').value.trim();
+      let tableBody = document.querySelector('#data-table tbody');
+      // 清空表格
+      tableBody.innerHTML = '';
+      // 筛选数据
+      let filteredData = data.filter(item => {
+        // 判断是否符合筛选条件
+        let nameMatch = name === '' || item.name.includes(name);
+        let ageMatch = age === '' || item.age == age;
+        let genderMatch = gender === '' || item.gender === gender;
+        let positionMatch = position === '' || item.position === position;
+        // 返回是否符合筛选条件
+        return nameMatch && ageMatch && genderMatch && positionMatch;
+      });
+
+      // 遍历筛选后的数据
+      filteredData.forEach(item => {
+        let row = document.createElement('tr');
+        // td表示表格中的一行
+        // item表示每一个人的信息
+        // 用于显示每一个人的信息
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td>${item.gender === 'male' ? '男' : '女'}</td>
+          <td>${item.age}</td>
+          <td>${item.avatar}</td>
+          <td>${item.position}</td>
+          <td>${item.entryTime}</td>
+          <td>${item.lastOperationTime}</td>
+          <td>
+            <button class="action-button" onclick="openModal('${item.name}', '${item.gender}', '${item.position}', '${item.age}', '${item.avatar}', '${item.entryTime}', '${item.id}')">编辑</button>
+            <button class="action-button delete" onclick="deleteData('${item.id}')">删除</button>
+          </td>
+        `;
+        // 将这一行添加到表格中
+        tableBody.appendChild(row);
+      });
+    }
+
+    // 用于添加数据的函数
+    function addData(event) {
+      // 阻止默认事件 , 如果不阻止默认事件,表单会自动提交preventDefault表示阻止默认事件
+      // 保证用户点击添加按钮时不会刷新页面
+      event.preventDefault();
+      // 获取输入框的值
+      // document: 文档(表示整个页面)
+      // getElementById: 获取id为name的元素
+      // 首先会先获取整个页面的元素然后通过getElementById传递id来获取元素
+      // value: 获取值
+      // trim: 去掉前后空格
+      // 获取到的元素会先通过value获取到值,然后通过trim去掉前后空格
+      // 最后通过赋值的方式将值赋给name
+      let name = document.getElementById('name').value.trim();
+      let age = document.getElementById('age').value.trim();
+      let gender = document.getElementById('gender').value.trim();
+      let position = document.getElementById('position').value.trim();
+      // 判断是否所有信息都填写完整(保证用户必须填写完整信息)
+      if (name && age && gender && position) {
+        // 获取当前时间(作为用户的初始入职时间)
+        // new Date(): 获取当前时间
+        // toISOString: 将时间转换为字符串
+        // split: 分割字符串
+        // [0]: 获取第一个元素
+        // 首先获取当前时间,然后通过toISOString将时间转换为字符串,然后通过split分割字符串,最后通过[0]获取第一个元素
+        // 赋值给entryTime
+        let entryTime = new Date().toISOString().split('T')[0];
+        // 获取最后操作时间(初始)
+        // entryTime: 入职时间
+        // new Date(): 获取当前时间
+        // toTimeString: 将时间转换为字符串
+        // split: 分割字符串
+        // [0]: 获取第一个元素
+        // 这里先entryTime拼接上一个空格,然后获取当前时间,
+        // 然后通过toTimeString将时间转换为字符串,然后通过split分割字符串,最后通过[0]获取第一个元素
+        let lastOperationTime = entryTime + ' ' + new Date().toTimeString().split(' ')[0];
+        // 创建了一个临时的头像变量
+        let avatar = '';
+        // new Date()获取当前时间
+        // getTime()获取时间戳
+        // 赋值给id这个变量
+        // 让每一栏的id都不一样
+        let id = new Date().getTime();
+        // 将用户的信息添加到data数组中
+        data.push({ id, name, age, gender, position, avatar, entryTime, lastOperationTime });
+        // 清空输入框
+        document.getElementById('name').value = '';
+        document.getElementById('age').value = '';
+        document.getElementById('gender').value = '';
+        document.getElementById('position').value = '';
+        // document: 文档
+        // querySelector: 获取第一个tbody元素
+        // 赋值给tableBody(用于添加数据)
+        let tableBody = document.querySelector('#data-table tbody');
+        // 创建一行
+        // 先通过document获取了界面上的tbody元素
+        // 然后通过createElement创建了一个tr元素
+        // 赋值给row
+        let row = document.createElement('tr');
+        // 通过获取到的tr元素
+        // 然后通过innerHTML添加了一行数据
+        row.innerHTML = `
+          <td>${name}</td>
+          <td>${gender === 'male' ? '男' : '女'}</td>
+          <td>${age}</td>
+          <td>${avatar}</td>
+          <td>${position}</td>
+          <td>${entryTime}</td>
+          <td>${lastOperationTime}</td>
+          <td>
+            <button class="action-button" onclick="openModal('${name}', '${gender}', '${position}', '${age}', '${avatar}', '${entryTime}', '${id}')">编辑</button>
+            <button class="action-button delete" onclick="deleteData('${id}')">删除</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      } 
+      else {
+        alert('请将所有信息填写完整！');
+      }
+    }
+
+    // 删除数据(因为之前设置了每一栏的id,所以可以通过id删除数据)
+    // 保证不会删除错误的数据
+    function deleteData(id) {
+      // 通过id删除数据
+      // data数组中使用了filter方法
+      // filter方法会返回一个新的数组,也可以删除数据
+      // filter方法会遍历数组中的每一个元素,传递了一个
+      // item表示每一个元素
+      // 使用了lanbda表达式
+      // item.id表示每一个元素的id 如果不等于传递的id就会返回,如果等于就会删除
+      data = data.filter(item => item.id !== Number(id));
+      // 重新渲染数据(保证数据的实时性)
+      findData();
+    }
+
+    // 编辑数据(如果需要修改数据,可以通过编辑按钮进行修改)这是用户点击编辑按钮后执行的函数(业务逻辑)
+    // 传递了当前的姓名、性别、职位、年龄、头像、入职时间、id
+    // id是用于判断是哪一个人的信息 , 是唯一的不允许重复和修改
+    function openModal(name, gender, position, age, avatar, entryTime, id) {
+      // document表示当前页的内容
+      // getElementById表示获取id为edit-name的元素
+      //  赋值给editName
+      let editName = document.getElementById('edit-name');
+      let editGender = document.getElementById('edit-gender');
+      let editPosition = document.getElementById('edit-position');
+      let editAge = document.getElementById('edit-age');
+      let editAvatar = document.getElementById('edit-avatar');
+      let editEntryTime = document.getElementById('edit-entry-time');
+      // 让当前的姓名、性别、职位、年龄、头像、入职时间显示在编辑框中
+      editName.value = name;
+      editGender.value = gender;
+      editPosition.value = position;
+      editAge.value = age;
+      editAvatar.value = avatar;
+      editEntryTime.value = entryTime;
+      editName.dataset.id = id;
+      // 通过id获取到edit-modal
+      // 赋值给modal
+      let modal = document.getElementById('edit-modal');
+      // 显示编辑框
+      modal.style.display = "block";
+    }
+
+    // 这个函数用于关闭编辑框
+    function closeModal() {
+      // 通过id获取到edit-modal
+      let modal = document.getElementById('edit-modal');
+      // 关闭编辑框
+      // modal调用了style.display
+      // style表示样式
+      // display表示显示
+      // 赋值为none
+      // 意思就是如果用户点击了关闭按钮,就会关闭编辑框
+      modal.style.display = "none";
+    }
+
+    // 保存编辑后的数据
+    function saveEdit() {
+      // 这里通过document.getElementById获取到了edit-name的值(网页中并不会完全关闭编辑页面,只是隐藏了)
+      // 所以可以通过document.getElementById获取到值
+      // value表示获取值
+      // trim表示去掉前后空格
+      // 赋值给editName
+      let editName = document.getElementById('edit-name').value.trim();// edit-name: 编辑的名字
+      let editGender = document.getElementById('edit-gender').value.trim();// edit-gender: 编辑的性别
+      let editPosition = document.getElementById('edit-position').value.trim();// edit-position: 编辑的职位
+      let editAge = document.getElementById('edit-age').value.trim();// edit-age: 编辑的年龄
+      let editAvatar = document.getElementById('edit-avatar').value.trim();// edit-avatar: 编辑的头像
+      let editEntryTime = document.getElementById('edit-entry-time').value.trim();// edit-entry-time: 编辑的入职时间
+      let id = Number(document.getElementById('edit-name').dataset.id);// edit-name: 编辑的名字(但是这里是id的作用)
+      // 获取到数组中的每一个元素
+      // 通过函数式编程的方式修改数据
+      // 如果id相等就修改数据
+      // item表示每一个元素
+      data = data.map(item => {
+        // item.id表每一个元素的id
+        // id表示传递的id
+        if (item.id === id) {
+          // 直接返回修改后的数据
+          return {
+            // 直接通过:赋值
+            id: item.id,
+            name: editName,
+            gender: editGender,
+            position: editPosition,
+            age: editAge,
+            avatar: editAvatar,
+            entryTime: editEntryTime,
+            lastOperationTime: new Date().toISOString().split('T')[0] + ' ' + new Date().toTimeString().split(' ')[0]
+          };
+        }
+        // 如果id不相等就返回原来的数据
+        return item;
+      });
+      closeModal();
+      findData();
+    }
+
+    // 页面加载完成后执行的函数
+    // $符号表示jQuery,表示这是一个jQuery的函数
+    // $(document).ready(function(){}): 表示页面加载完成后执行的函数
+    // (document): 表示文档(表示整个页面)ready: 表示加载完成
+    // 这一整个就是用于日历和时间的插件
+    $(document).ready(function () {
+      // 这是用于展示时间的插件
+      // $("#edit-entry-time"): 表示id为edit-entry-time的元素
+      // datepicker: 表示日期选择器
+      $("#edit-entry-time").datepicker({
+        // dateFormat: "yy-mm-dd": 表示日期的格式
+        // yy: 表示年
+        // mm: 表示月
+        // dd: 表示日
+        // 其中-表示分隔符(可以修改)
+        dateFormat: "yy-mm-dd",
+        // onSelect: function(dateText): 表示选择日期后执行的函数
+        // dateText: 表示选择的日期
+        // onSelect 会在选择日期后执行
+        // function 意思是一个函数表示选择日期后执行的函数
+        onSelect: function (dateText) {
+          // $(this).val(dateText): 表示将选择的日期赋值给当前的输入框
+          $(this).val(dateText);
+        }
+      });
+    });
+  </script>
+
+
+<!-------------------------- 底部版权区域 -------------------------->
+<footer class="footer">
+  <p>© 2024 AAetherTech员工辅助系统</p>
+  <p>联系电话：xxxx-xxxx6666</p>
+  <p>版权所有：AetherTech公司 @ Nanxingchen</p>
+</footer>
+
+
+
+</body>
+
+</html>
